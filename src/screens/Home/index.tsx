@@ -14,8 +14,11 @@ interface Movie {
 
 export function Home() {
     const [discoveryMovies, setDiscoveryMovies] = useState<Movie[]>([]);   
+    const [searchResultMovies, setSearchResultMovies] = useState<Movie[]>([]);   
     const [page,setPage] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [noResult, setNoResult] = useState(false);
+    const [search, setSearch] = useState("");
 
     useEffect(() => {
         loadMoreData();
@@ -32,6 +35,33 @@ export function Home() {
         setPage(page + 1);
         setLoading(false);
     }
+
+    const searchMovies = async (query:string) => {
+        setLoading(true);
+        const response = await api.get("/search/movie", {
+            params: {
+                query,
+            }
+        }); 
+
+        if (response.data.results.length === 0) {
+            setNoResult(true);
+        } else {
+            setSearchResultMovies(response.data.results);
+        }
+        setLoading(false);
+    } 
+
+    const handleSearch = (text:string) => {
+        setSearch(text);
+        if (text.length > 2) {
+            searchMovies(text);
+        } else {
+            setSearchResultMovies([]);
+        }
+    }
+
+    const movieData = search.length > 2 ? searchResultMovies : discoveryMovies
     
     return(
         <View style={styles.container}>
@@ -43,6 +73,8 @@ export function Home() {
                         placeholderTextColor={"#67686D"}
                         style={styles.input}
                         placeholder="Buscar"
+                        value={search}
+                        onChangeText={handleSearch}
                     />
                     <MagnifyingGlass
                         color="#67686D"
@@ -53,7 +85,7 @@ export function Home() {
             </View>
             <View>
                 <FlatList 
-                    data={discoveryMovies}
+                    data={movieData}
                     numColumns={3}
                     renderItem={(item) => <CardMovies data={item.item}/>}
                     showsVerticalScrollIndicator={false}
