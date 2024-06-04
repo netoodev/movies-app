@@ -1,4 +1,4 @@
-import { FlatList, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, FlatList, Text, TextInput, View } from "react-native";
 import { styles } from "./styles";
 import { MagnifyingGlass} from "phosphor-react-native";
 import { useEffect, useState } from "react";
@@ -13,16 +13,24 @@ interface Movie {
 }
 
 export function Home() {
-
     const [discoveryMovies, setDiscoveryMovies] = useState<Movie[]>([]);   
+    const [page,setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         loadMoreData();
     }, []);
     
     const loadMoreData = async () => {
-        const response = await api.get("/movie/popular");
-        setDiscoveryMovies(response.data.results);
+        setLoading(true);
+        const response = await api.get("/movie/popular", {
+            params: {
+                page,
+            }
+        });
+        setDiscoveryMovies([...discoveryMovies, ...response.data.results]);
+        setPage(page + 1);
+        setLoading(false);
     }
     
     return(
@@ -53,7 +61,10 @@ export function Home() {
                         padding: 35,
                         paddingBottom: 100,
                     }}
+                    onEndReached={() => loadMoreData()}
+                    onEndReachedThreshold={0.5}
                 />
+                {loading && <ActivityIndicator size={50} color={"#0296e5"}/>}
             </View>
         </View>
     );
