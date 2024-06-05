@@ -1,9 +1,19 @@
-import { StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#242A32',
+    },
+
+    noResult: {
+      color: "#FFF",
+      fontSize: 18,
+      textAlign: "center",
+      marginVertical: 10,
+    },
+    flatList: {
+      
     },
     
     header: {

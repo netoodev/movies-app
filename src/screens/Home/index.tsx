@@ -41,15 +41,18 @@ export function Home() {
         const response = await api.get("/search/movie", {
             params: {
                 query,
-            }
+            },
         }); 
 
         if (response.data.results.length === 0) {
             setNoResult(true);
-        } else {
+            setLoading(false);
+            setSearchResultMovies([]);
+          } else {
+            setNoResult(false);
             setSearchResultMovies(response.data.results);
+            setLoading(false);
         }
-        setLoading(false);
     } 
 
     const handleSearch = (text:string) => {
@@ -82,6 +85,12 @@ export function Home() {
                         weight="light"
                     />
                 </View>
+
+                {noResult && (
+                    <Text style={styles.noResult}>
+                        Nenhum filme encontrado para "{search}"
+                    </Text>
+                )}
             </View>
             <View>
                 <FlatList 
