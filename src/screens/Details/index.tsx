@@ -1,6 +1,6 @@
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { api } from "../../services/api";
 import { BookmarkSimple, CalendarBlank, CaretLeft, Clock, Star } from "phosphor-react-native";
 
@@ -25,6 +25,8 @@ export function Details() {
     const [loading, setLoading] = useState(false);
     const route = useRoute()
     const {movieId} = route.params as RouterProps;
+
+    const navigation = useNavigation()
     
     useEffect(() => {
         const fetchMovieDetails = async () => {
@@ -49,7 +51,9 @@ export function Details() {
     return(
         <View style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => navigation.goBack()}               
+                >
                     <CaretLeft color="#FFF" size={32} weight="thin" />
                 </TouchableOpacity>
                 <Text style={styles.headerText}>Detalhes</Text>
@@ -57,8 +61,10 @@ export function Details() {
                     <BookmarkSimple color="#FFF" size={32} weight="thin" />
                 </TouchableOpacity>
             </View>
-
-            <View>
+                {loading && <ActivityIndicator size="large" color="#FFF" />}
+                {!loading && 
+                <>
+                <View>
                 <Image source={{
                     uri: `https://image.tmdb.org/t/p/w500${movieDetails?.backdrop_path}`,
                     }}
@@ -105,6 +111,9 @@ export function Details() {
                 <Text style={[styles.aboutText, {color: "#0296e5", marginBottom: 5}]}>Sinopse</Text>
                 <Text style={styles.aboutText}>{movieDetails?.overview === "" ? "Ops! Parece que esse filme ainda não tem sinopse :(" : movieDetails?.overview}</Text>
             </View>
+                </>
+                }
+            
         </View>
     );
 }
