@@ -51,4 +51,11 @@ export function MovieProvider({children}: MovieProviderProps) {
             await AsyncStorage.setItem("@FavoriteMovies", JSON.stringify(newFavoriteMovies));
         }
     },[favoriteMovies]);
+
+    const removeFavoriteMovies = useCallback(async (movieId:number) => {
+        const newFavoriteMovies = favoriteMovies.filter(id => id !== movieId);
+        setFavoriteMovies(newFavoriteMovies);
+        await AsyncStorage.setItem("@FavoriteMovies", JSON.stringify(newFavoriteMovies));
+    },[favoriteMovies]);
+
 }
