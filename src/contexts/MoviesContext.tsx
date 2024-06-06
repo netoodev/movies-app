@@ -58,4 +58,17 @@ export function MovieProvider({children}: MovieProviderProps) {
         await AsyncStorage.setItem("@FavoriteMovies", JSON.stringify(newFavoriteMovies));
     },[favoriteMovies]);
 
+    const contextData: MovieContextData = {
+        favoriteMovies,
+        allFavoriteMovies,
+        addFavoriteMovies,
+        removeFavoriteMovies,
+    };
+
+    return (
+        <MovieContext.Provider value={contextData} >
+            {children}
+        </MovieContext.Provider>
+    )
+
 }
